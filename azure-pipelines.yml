@@ -1,3 +1,4 @@
+
 # Python package
 # Create and test a Python package on multiple Python versions.
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
@@ -36,6 +37,7 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: |
+      az config set extension.use_dynamic_install=yes_without_prompt
       az iot hub device-identity create --hub-name  myiothubdevops --device-id MyPythonDevice
       $env:AZURE_RESOURCE_GROUP = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output yaml
       $env:AZURE_RESOURCE_GROUP
