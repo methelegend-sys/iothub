@@ -3,11 +3,11 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-#trigger:
-#- master
+trigger:
+- master
 
-#pool:
-#  vmImage: ubuntu-latest
+pool:
+  vmImage: ubuntu-latest
 #strategy:
 #  matrix:
 #    Python37:
@@ -32,15 +32,10 @@
 
 
 steps:
-  # Sets FOO to be "some value" in the script and the next ones
-  - bash: |
-      FOO="runtime value"
-      echo "##vso[task.setvariable variable=FOO]$FOO"
+- bash: az --version
+  displayName: 'Show Azure CLI version'
 
-  # Using the $() syntax during "compile time", the pipeline expands the variable
-  - bash: |
-      echo "$(FOO)"
-
-  # Using an environment variable in the script context at "runtime", bash expands the variable
-  - bash: |
-      echo "$FOO"
+- bash: echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+  env:
+    AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+  displayName: 'Login Azure DevOps Extension'
