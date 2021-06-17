@@ -29,7 +29,7 @@ pool:
 #    scriptSource: 'filePath'
 #    scriptPath: 'demo.py'
 #    failOnStderr: true'
-
+steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'connection1'
@@ -37,5 +37,5 @@ pool:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az iot hub device-identity create --hub-name  myiothubdevops --device-id MyPythonDevice
-      $env:AZURE_RESOURCE_GROUP = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output table
+      $env:AZURE_RESOURCE_GROUP = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output yaml
       $env:AZURE_RESOURCE_GROUP
