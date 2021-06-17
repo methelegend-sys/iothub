@@ -41,3 +41,4 @@ steps:
       az iot hub device-identity create --hub-name  myiothubdevops --device-id MyPythonDevice
       $env:AZURE_RESOURCE_GROUP = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output yaml
       $env:AZURE_RESOURCE_GROUP
+      az iot hub device-identity delete --device-id MyPythonDevice --hub-name myiothubdevops
