@@ -29,7 +29,7 @@ steps:
   displayName: Register Device
   inputs:
     azureSubscription: 'connection1'
-    scriptType: 'ps'
+    scriptType: 'pscore'
     scriptLocation: 'scriptPath'
     scriptPath: 'script.ps1'
 - task: AzureCLI@2
