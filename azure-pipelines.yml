@@ -36,11 +36,13 @@ steps:
       az iot hub device-identity create --hub-name  myiothubdevops --device-id MyPythonDevice
       $env:CONNECTION_STRING = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output tsv
       $env:CONNECTION_STRING 
+
      
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: 'echo $env:CONNECTION_STRING'
+    script: 'Write-Host "Using Department: $($env:CONNECTION_STRING)"'
+
 - task: PythonScript@0
   inputs:
     scriptSource: 'filePath'
