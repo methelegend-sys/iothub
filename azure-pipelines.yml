@@ -32,6 +32,7 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'scriptPath'
     scriptPath: 'script.ps1'
+    failOnStandardError: true
 - task: AzureCLI@2
   displayName: Send Telemetry 
   inputs:
@@ -39,6 +40,7 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'scriptPath'
     scriptPath: 'sendtelemetry.ps1'
+    failOnStandardError: true
 
 - task: AzureCLI@2
   inputs:
@@ -46,3 +48,4 @@ steps:
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: 'az iot hub device-identity delete --device-id MyPythonDevice --hub-name myiothubdevops'
+    failOnStandardError: true
