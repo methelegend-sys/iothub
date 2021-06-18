@@ -36,6 +36,7 @@ steps:
       az iot hub device-identity create --hub-name  myiothubdevops --device-id MyPythonDevice
       $env:CONNECTION_STRING = az iot hub device-identity connection-string show --hub-name myiothubdevops --device-id MyPythonDevice --output tsv
       $env:CONNECTION_STRING 
+      Write-Host "##vso[task.setvariable variable=sauce;]$env:CONNECTION_STRING"
 
      
 - task: PowerShell@2
