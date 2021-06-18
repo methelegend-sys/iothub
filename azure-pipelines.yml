@@ -6,46 +6,92 @@
 
 trigger:
 - master
+stages:
+- stage: Adding-Device 
+  jobs:
+    - job: adding-device
+      pool:
+        vmImage: windows-latest
 
-pool:
-  vmImage: windows-latest
-strategy:
-  matrix:
-    Python37:
-      python.version: '3.7'
+      steps:
+        - task: AzureCLI@2
+          displayName: Register Device
+          inputs:
+            azureSubscription: 'connection1'
+            scriptType: 'pscore'
+            scriptLocation: 'scriptPath'
+            scriptPath: 'script.ps1'
+            failOnStandardError: true
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+- stage: Send Telemetry 
+  dependsOn: Adding-Device
+  jobs:
+    - job: Sending-Telemtry
+      pool:
+        vmImage: windows-latest
+      strategy:
+        matrix:
+          Python37:
+            python.version: '3.7'
+      steps:
+        - script: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            displayName: 'Install dependencies'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(python.version)'
+          displayName: 'Use Python $(python.version)'
 
-- task: AzureCLI@2
-  displayName: Register Device
-  inputs:
-    azureSubscription: 'connection1'
-    scriptType: 'pscore'
-    scriptLocation: 'scriptPath'
-    scriptPath: 'script.ps1'
-    failOnStandardError: true
-- task: AzureCLI@2
-  displayName: Send Telemetry 
-  inputs:
-    azureSubscription: 'connection1'
-    scriptType: 'ps'
-    scriptLocation: 'scriptPath'
-    scriptPath: 'sendtelemetry.ps1'
-    failOnStandardError: true
+        - task: AzureCLI@2
+          displayName: Send Telemetry 
+          inputs:
+            azureSubscription: 'connection1'
+            scriptType: 'ps'
+            scriptLocation: 'scriptPath'
+            scriptPath: 'sendtelemetry.ps1'
+            failOnStandardError: true
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'connection1'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az iot hub device-identity delete --device-id MyPythonDevice --hub-name myiothubdevops'
-    failOnStandardError: true
+- stage: Receive-Telemetry 
+  dependsOn: Adding-Device
+  jobs:
+    - job: adding-device
+      pool:
+        vmImage: windows-latest
+      strategy:
+        matrix:
+          Python37:
+            python.version: '3.7'
+      steps:
+        - script: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            displayName: 'Install dependencies'
+
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '$(python.version)'
+          displayName: 'Use Python $(python.version)'
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: 'connection1'
+            scriptType: 'ps'
+            scriptLocation: 'scriptPath'
+            scriptPath: 'receive.ps1'
+            failOnStandardError: true
+
+- stage: Receive-Telemetry 
+  jobs:
+    - job: adding-device
+      pool:
+        vmImage: windows-latest
+      
+      steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: 'connection1'
+            scriptType: 'ps'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az iot hub device-identity delete --device-id MyPythonDevice --hub-name myiothubdevops'
+            failOnStandardError: true
