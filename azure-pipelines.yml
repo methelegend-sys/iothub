@@ -26,22 +26,19 @@ steps:
   displayName: 'Install dependencies'
 
 - task: AzureCLI@2
+  displayName: Register Device
   inputs:
     azureSubscription: 'connection1'
     scriptType: 'ps'
     scriptLocation: 'scriptPath'
     scriptPath: 'script.ps1'
-     
-- task: PowerShell@2
+- task: AzureCLI@2
+  displayName: Send Telemetry 
   inputs:
-    targetType: 'inline'
-    script: 'Write-Host "Using Department: $($env:CONNECTION_STRING)"'
-
-- task: PythonScript@0
-  inputs:
-    scriptSource: 'filePath'
-    scriptPath: 'SimulatedDevice.py'
-    failOnStderr: true
+    azureSubscription: 'connection1'
+    scriptType: 'ps'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'sendtelemetry.ps1'
 
 - task: AzureCLI@2
   inputs:
